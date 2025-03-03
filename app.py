@@ -1,5 +1,9 @@
 import os
+import logging
 from flask import Flask, request, render_template
+
+# Cấu hình logging
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 
@@ -8,6 +12,10 @@ def index():
     result = ''
     if request.method == 'POST':
         user_input = request.form['user_input']
+        
+        # Ghi lại hành động người dùng nhập
+        logging.info(f"User input: {user_input}")
+        
         responses = {
             'Ngọc Ánh': 'Ngọc Ánh Yêu Vương Lộc Trường',
             'Vương Lộc Trường': 'Vương Lộc Trường Yêu Ngọc Ánh',
