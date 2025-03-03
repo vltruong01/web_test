@@ -11,7 +11,7 @@ app = Flask(__name__)
 def index():
     result = ''
     if request.method == 'POST':
-        user_input = request.form['user_input'].lower()
+        user_input = request.form['user_input'].lower()  # Chuyển input về chữ thường
         
         # Ghi lại hành động người dùng nhập
         logging.info(f"User input: {user_input}")
