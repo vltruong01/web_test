@@ -19,7 +19,7 @@ def index():
         responses = {
             'Ngọc Ánh': 'Ngọc Ánh Yêu Vương Lộc Trường',
             'Vương Lộc Trường': 'Vương Lộc Trường Yêu Ngọc Ánh',
-            'anhsime': 'Ánh Dú Bự'
+            'anhsime': 'Ánh Dú Bự',
             'Phan Quốc Huy': 'Ế không ai iu'
         }
         result = responses.get(user_input, 'Không tìm thấy kết quả!')
