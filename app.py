@@ -11,16 +11,16 @@ app = Flask(__name__)
 def index():
     result = ''
     if request.method == 'POST':
-        user_input = request.form['user_input']
+        user_input = request.form['user_input'].lower()
         
         # Ghi lại hành động người dùng nhập
         logging.info(f"User input: {user_input}")
         
         responses = {
-            'Ngọc Ánh': 'Ngọc Ánh Yêu Vương Lộc Trường',
-            'Vương Lộc Trường': 'Vương Lộc Trường Yêu Ngọc Ánh',
+            'ngọc ánh': 'Ngọc Ánh Yêu Vương Lộc Trường',
+            'vương lộc trường': 'Vương Lộc Trường Yêu Ngọc Ánh',
             'anhsime': 'Ánh Dú Bự',
-            'Phan Quốc Huy': 'Ế không ai iu'
+            'phan quốc huy': 'Ế không ai iu'
         }
         result = responses.get(user_input, 'Không tìm thấy kết quả!')
     return render_template('index.html', result=result)
