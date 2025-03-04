@@ -54,6 +54,7 @@ def admin():
         else:
             new_entry = Dictionary(key=key, value=value)
             db.session.add(new_entry)
+            db.session.commit()
             message = "Thêm thành công!"
 
         db.session.commit()
