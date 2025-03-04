@@ -83,7 +83,9 @@
             <tr>
                 <td>{{ loop.index }}</td>
                 <td>{{ entry.key }}</td>
+                <td>{{ entry.value }}</td>
                 <td>
+                    <!-- Form cập nhật không nằm trong ô giá trị -->
                     <form method="post" style="display:inline;">
                         <input type="hidden" name="key" value="{{ entry.key }}">
                         <input type="text" name="value" value="{{ entry.value }}" required>
