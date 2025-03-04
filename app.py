@@ -8,54 +8,67 @@ logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 
-# Đường dẫn file JSON để lưu từ điển
+# Tệp JSON lưu từ điển
 DICTIONARY_FILE = "dictionary.json"
 
-# **Hàm đọc từ điển từ JSON**
+# Load từ điển từ file JSON
 def load_dictionary():
     if os.path.exists(DICTIONARY_FILE):
-        with open(DICTIONARY_FILE, 'r', encoding='utf-8') as file:
-            return json.load(file)
-    return {}  # Trả về từ điển rỗng nếu chưa có file JSON
+        with open(DICTIONARY_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
 
-# **Hàm ghi từ điển vào JSON**
-def save_dictionary():
-    with open(DICTIONARY_FILE, 'w', encoding='utf-8') as file:
-        json.dump(dictionary, file, ensure_ascii=False, indent=4)
+# Lưu từ điển vào file JSON
+def save_dictionary(dictionary):
+    with open(DICTIONARY_FILE, "w", encoding="utf-8") as f:
+        json.dump(dictionary, f, ensure_ascii=False, indent=4)
 
-# **Khởi tạo từ điển**
+# Khởi tạo từ điển
 dictionary = load_dictionary()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     result = ''
     if request.method == 'POST':
-        user_input = request.form['user_input'].strip().lower()
-        
-        # Ghi log input của người dùng
+        user_input = request.form['user_input'].lower()
         logging.info(f"User input: {user_input}")
-        
-        # Kiểm tra từ điển
         result = dictionary.get(user_input, 'Không tìm thấy kết quả!')
-    
     return render_template('index.html', result=result)
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    message = ''
-    if request.method == 'POST':
-        key = request.form['key'].strip().lower()
-        value = request.form['value'].strip()
-        
-        if key and value:
-            dictionary[key] = value
-            save_dictionary()  # Lưu vào file JSON
-            message = f'Từ "{key}" đã được thêm với nghĩa "{value}"'
-            logging.info(f'Admin added: {key} -> {value}')
-        else:
-            message = 'Vui lòng nhập đầy đủ thông tin!'
+    message = ""
     
-    return render_template('admin.html', message=message, dictionary=dictionary)
+    if request.method == 'POST':
+        key = request.form.get('key', '').strip().lower()
+        value = request.form.get('value', '').strip()
+        action = request.form.get('action')
+
+        if action == "add":
+            if key and value:
+                dictionary[key] = value
+                save_dictionary(dictionary)
+                message = "Thêm thành công!"
+            else:
+                message = "Vui lòng nhập đầy đủ thông tin."
+        
+        elif action == "update":
+            if key in dictionary:
+                dictionary[key] = value
+                save_dictionary(dictionary)
+                message = "Cập nhật thành công!"
+            else:
+                message = "Từ không tồn tại!"
+        
+        elif action == "delete":
+            if key in dictionary:
+                del dictionary[key]
+                save_dictionary(dictionary)
+                message = "Xóa thành công!"
+            else:
+                message = "Từ không tồn tại!"
+    
+    return render_template('admin.html', dictionary=dictionary, message=message)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))

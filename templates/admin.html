@@ -1,22 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-    <title>Quản lý Từ Điển</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý từ điển</title>
 </head>
 <body>
-    <h2>Thêm từ vào từ điển</h2>
-    <form method="POST">
-        <input type="text" name="key" placeholder="Nhập từ khóa" required>
+    <h2>Quản lý từ điển</h2>
+
+    <!-- Form thêm từ mới -->
+    <form method="post">
+        <input type="text" name="key" placeholder="Nhập từ" required>
         <input type="text" name="value" placeholder="Nhập nghĩa" required>
-        <button type="submit">Thêm</button>
+        <button type="submit" name="action" value="add">Thêm</button>
     </form>
+    
     <p>{{ message }}</p>
 
-    <h2>Từ điển hiện tại</h2>
+    <h3>Từ điển hiện tại:</h3>
     <ul>
         {% for key, value in dictionary.items() %}
-            <li><strong>{{ key }}</strong>: {{ value }}</li>
+            <li>
+                <strong>{{ key }}</strong>: 
+                <form method="post" style="display:inline;">
+                    <input type="hidden" name="key" value="{{ key }}">
+                    <input type="text" name="value" value="{{ value }}" required>
+                    <button type="submit" name="action" value="update">Cập nhật</button>
+                </form>
+                <form method="post" style="display:inline;">
+                    <input type="hidden" name="key" value="{{ key }}">
+                    <button type="submit" name="action" value="delete" style="color:red;">Xóa</button>
+                </form>
+            </li>
         {% endfor %}
     </ul>
+
+    <a href="/">⬅ Quay lại trang tra cứu</a>
 </body>
 </html>
