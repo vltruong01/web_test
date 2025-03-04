@@ -2,16 +2,17 @@ import os
 import logging
 from flask import Flask, request, render_template, redirect, url_for
 
-app = Flask(__name__)
-
 # Cấu hình logging
 logging.basicConfig(level=logging.INFO)
 
-# Bộ nhớ tạm lưu từ điển (có thể thay bằng database sau này)
+app = Flask(__name__)
+
+# Bộ nhớ tạm lưu từ điển (có thể thay bằng database)
 dictionary = {
-    'Ngọc Ánh': 'Ngọc Ánh Yêu Vương Lộc Trường',
-    'Vương Lộc Trường': 'Vương Lộc Trường Yêu Ngọc Ánh',
-    'anhsime': 'Ánh Dú Bự'
+    'ngọc ánh': 'Ngọc Ánh Yêu Vương Lộc Trường',
+    'vương lộc trường': 'Vương Lộc Trường Yêu Ngọc Ánh',
+    'anhsime': 'Ánh Đẹp Gái',
+    'phan quốc huy': 'Ế không ai iu'
 }
 
 @app.route('/', methods=['GET', 'POST'])
