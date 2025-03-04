@@ -1,74 +1,74 @@
 import os
-import json
 import logging
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
 
 # Cấu hình logging
 logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 
-# Tệp JSON lưu từ điển
-DICTIONARY_FILE = "dictionary.json"
+# Cấu hình SQLite (hoặc thay bằng MySQL, PostgreSQL)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dictionary.db'  # SQLite
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-# Load từ điển từ file JSON
-def load_dictionary():
-    if os.path.exists(DICTIONARY_FILE):
-        with open(DICTIONARY_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {}
+# Model cho từ điển
+class Dictionary(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(100), unique=True, nullable=False)
+    value = db.Column(db.String(255), nullable=False)
 
-# Lưu từ điển vào file JSON
-def save_dictionary(dictionary):
-    with open(DICTIONARY_FILE, "w", encoding="utf-8") as f:
-        json.dump(dictionary, f, ensure_ascii=False, indent=4)
+# Tạo database nếu chưa có
+with app.app_context():
+    db.create_all()
 
-# Khởi tạo từ điển
-dictionary = load_dictionary()
-
+# Trang chính
 @app.route('/', methods=['GET', 'POST'])
 def index():
     result = ''
     if request.method == 'POST':
         user_input = request.form['user_input'].lower()
         logging.info(f"User input: {user_input}")
-        result = dictionary.get(user_input, 'Không tìm thấy kết quả!')
+
+        word = Dictionary.query.filter_by(key=user_input).first()
+        if word:
+            result = word.value
+        else:
+            result = 'Không tìm thấy kết quả!'
+    
     return render_template('index.html', result=result)
 
+# Trang quản lý từ điển
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    message = ""
-    
+    message = ''
     if request.method == 'POST':
-        key = request.form.get('key', '').strip().lower()
-        value = request.form.get('value', '').strip()
-        action = request.form.get('action')
+        key = request.form['key'].lower()
+        value = request.form['value']
 
-        if action == "add":
-            if key and value:
-                dictionary[key] = value
-                save_dictionary(dictionary)
-                message = "Thêm thành công!"
-            else:
-                message = "Vui lòng nhập đầy đủ thông tin."
-        
-        elif action == "update":
-            if key in dictionary:
-                dictionary[key] = value
-                save_dictionary(dictionary)
-                message = "Cập nhật thành công!"
-            else:
-                message = "Từ không tồn tại!"
-        
-        elif action == "delete":
-            if key in dictionary:
-                del dictionary[key]
-                save_dictionary(dictionary)
-                message = "Xóa thành công!"
-            else:
-                message = "Từ không tồn tại!"
+        existing_entry = Dictionary.query.filter_by(key=key).first()
+        if existing_entry:
+            existing_entry.value = value  # Cập nhật từ điển
+            message = "Cập nhật thành công!"
+        else:
+            new_entry = Dictionary(key=key, value=value)
+            db.session.add(new_entry)
+            message = "Thêm thành công!"
+
+        db.session.commit()
     
+    dictionary = Dictionary.query.all()
     return render_template('admin.html', dictionary=dictionary, message=message)
+
+# Route để xóa từ điển
+@app.route('/delete/<int:id>', methods=['GET'])
+def delete(id):
+    word = Dictionary.query.get(id)
+    if word:
+        db.session.delete(word)
+        db.session.commit()
+    return redirect(url_for('admin'))
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))

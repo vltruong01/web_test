@@ -31,6 +31,12 @@
         }
         .delete-button {
             color: red;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        .delete-button:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -51,11 +57,13 @@
         {% for key, value in dictionary.items() %}
             <li>
                 <strong>{{ key }}</strong>: 
+                <!-- Cập nhật từ -->
                 <form method="post" style="display:inline;">
                     <input type="hidden" name="key" value="{{ key }}">
                     <input type="text" name="value" value="{{ value }}" required>
                     <button type="submit" name="action" value="update">Cập nhật</button>
                 </form>
+                <!-- Xóa từ -->
                 <form method="post" style="display:inline;">
                     <input type="hidden" name="key" value="{{ key }}">
                     <button type="submit" name="action" value="delete" class="delete-button">Xóa</button>
