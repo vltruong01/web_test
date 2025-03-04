@@ -9,7 +9,8 @@ logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 
 # Cấu hình SQLite (hoặc thay bằng MySQL, PostgreSQL)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dictionary.db'  # SQLite
+# Sử dụng Persistent Storage từ Render
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////mnt/data/dictionary.db'  # Đường dẫn Persistent Storage
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
