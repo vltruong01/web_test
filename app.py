@@ -9,8 +9,9 @@ logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 
 # Cấu hình SQLite (hoặc thay bằng MySQL, PostgreSQL)
-# Sử dụng Persistent Storage từ Render
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////mnt/data/dictionary.db'  # Đường dẫn Persistent Storage
+# Đảm bảo sử dụng Persistent Storage từ Render
+database_uri = os.environ.get('DATABASE_URI', 'sqlite:////mnt/data/dictionary.db')  # Đường dẫn Persistent Storage
+app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -73,5 +74,6 @@ def delete(id):
     return redirect(url_for('admin'))
 
 if __name__ == '__main__':
+    # Cấu hình port từ môi trường (Render uses 10000 by default)
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port, debug=True)
