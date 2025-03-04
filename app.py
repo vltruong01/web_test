@@ -1,6 +1,5 @@
 import os
 import logging
-import unicodedata
 from flask import Flask, request, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
@@ -25,19 +24,12 @@ class Dictionary(db.Model):
 with app.app_context():
     db.create_all()
 
-def normalize_input(input_str):
-    # Chuyển input về chữ thường và loại bỏ dấu
-    return ''.join(
-        c for c in unicodedata.normalize('NFD', input_str.lower())
-        if unicodedata.category(c) != 'Mn'
-    )
-
 # Trang chính
 @app.route('/', methods=['GET', 'POST'])
 def index():
     result = ''
     if request.method == 'POST':
-        user_input = normalize_input(request.form['user_input'])
+        user_input = request.form['user_input'].lower()
         logging.info(f"User input: {user_input}")
 
         word = Dictionary.query.filter_by(key=user_input).first()
@@ -45,8 +37,6 @@ def index():
             result = word.value
         else:
             result = 'Không tìm thấy kết quả!'
-        
-        logging.info(f"Output result: {result}")
     
     return render_template('index.html', result=result)
 
@@ -55,7 +45,7 @@ def index():
 def admin():
     message = ''
     if request.method == 'POST':
-        key = normalize_input(request.form['key'])
+        key = request.form['key'].lower()
         value = request.form['value']
 
         # Kiểm tra xem từ đã tồn tại chưa
@@ -68,8 +58,6 @@ def admin():
             db.session.add(new_entry)
             db.session.commit()
             message = "Thêm thành công!"
-        
-        logging.info(f"Admin action: {request.form['action']}, Key: {key}, Value: {value}, Message: {message}")
     
     # Lấy tất cả các từ trong từ điển
     dictionary = Dictionary.query.all()
