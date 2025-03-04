@@ -27,12 +27,10 @@ with app.app_context():
 
 def normalize_input(input_str):
     # Chuyển input về chữ thường và loại bỏ dấu
-    normalized_str = ''.join(
+    return ''.join(
         c for c in unicodedata.normalize('NFD', input_str.lower())
         if unicodedata.category(c) != 'Mn'
     )
-    logging.info(f"Normalized input: {normalized_str}")
-    return normalized_str
 
 # Trang chính
 @app.route('/', methods=['GET', 'POST'])
