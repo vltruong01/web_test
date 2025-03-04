@@ -2,7 +2,6 @@ import os
 import logging
 from flask import Flask, request, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from unidecode import unidecode  # Thêm import thư viện unidecode
 
 # Cấu hình logging
 logging.basicConfig(level=logging.INFO)
@@ -30,23 +29,14 @@ with app.app_context():
 def index():
     result = ''
     if request.method == 'POST':
-        user_input = request.form['user_input'].lower()  # Đưa đầu vào thành chữ thường
+        user_input = request.form['user_input'].lower()
         logging.info(f"User input: {user_input}")
 
-        # Loại bỏ dấu và chuyển thành chữ thường
-        user_input_no_accent = unidecode(user_input)  # Loại bỏ dấu
-
-        # Tìm kiếm từ trong cơ sở dữ liệu, sử dụng ilike để so sánh không phân biệt hoa/thường
-        # Lưu ý: chỉ tìm từ có dấu (so với nguyên bản, không loại bỏ dấu khi lưu trong cơ sở dữ liệu)
-        word = Dictionary.query.filter(Dictionary.key.ilike(f'%{user_input_no_accent}%')).first()
-
+        word = Dictionary.query.filter_by(key=user_input).first()
         if word:
             result = word.value
         else:
             result = 'Không tìm thấy kết quả!'
-        
-        # Ghi log cả input và output
-        logging.info(f"User output: {result}")
     
     return render_template('index.html', result=result)
 
@@ -55,7 +45,7 @@ def index():
 def admin():
     message = ''
     if request.method == 'POST':
-        key = request.form['key'].lower()  # Nhập từ dưới dạng chữ thường để so sánh
+        key = request.form['key'].lower()
         value = request.form['value']
 
         # Kiểm tra xem từ đã tồn tại chưa
