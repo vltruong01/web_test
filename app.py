@@ -47,6 +47,7 @@ def admin():
         key = request.form['key'].lower()
         value = request.form['value']
 
+        # Kiểm tra xem từ đã tồn tại chưa
         existing_entry = Dictionary.query.filter_by(key=key).first()
         if existing_entry:
             existing_entry.value = value  # Cập nhật từ điển
@@ -56,9 +57,8 @@ def admin():
             db.session.add(new_entry)
             db.session.commit()
             message = "Thêm thành công!"
-
-        db.session.commit()
     
+    # Lấy tất cả các từ trong từ điển
     dictionary = Dictionary.query.all()
     return render_template('admin.html', dictionary=dictionary, message=message)
 
