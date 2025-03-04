@@ -8,9 +8,8 @@ logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 
-# Cấu hình SQLite (hoặc thay bằng MySQL, PostgreSQL)
-# Đảm bảo sử dụng Persistent Storage từ Render
-database_uri = os.environ.get('DATABASE_URI', 'sqlite:////mnt/data/dictionary.db')  # Đường dẫn Persistent Storage
+# Cấu hình PostgreSQL (Render)
+database_uri = os.environ.get('DATABASE_URI', 'postgresql://web_test_olxc_user:eqI93uS1LWJS9qdzFn5GNR4Q91V1H34C@dpg-cv3h6uan91rc739ftn20-a:5432/web_test_olxc')  # Đường dẫn Persistent Storage
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
