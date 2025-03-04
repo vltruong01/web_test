@@ -4,6 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý từ điển</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2, h3 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 5px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 5px 10px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .delete-button {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <h2>Quản lý từ điển</h2>
@@ -29,7 +58,7 @@
                 </form>
                 <form method="post" style="display:inline;">
                     <input type="hidden" name="key" value="{{ key }}">
-                    <button type="submit" name="action" value="delete" style="color:red;">Xóa</button>
+                    <button type="submit" name="action" value="delete" class="delete-button">Xóa</button>
                 </form>
             </li>
         {% endfor %}
