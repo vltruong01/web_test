@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý từ điển</title>
+</head>
+<body>
+    <h2>Quản lý từ điển</h2>
+    <form method="post">
+        <input type="text" name="key" placeholder="Nhập từ">
+        <input type="text" name="value" placeholder="Nhập nghĩa">
+        <button type="submit">Thêm</button>
+    </form>
+    <p>{{ message }}</p>
+
+    <h3>Từ điển hiện tại:</h3>
+    <ul>
+        {% for key, value in dictionary.items() %}
+            <li><strong>{{ key }}</strong>: {{ value }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="/">Quay lại trang tra cứu</a>
+</body>
+</html>
