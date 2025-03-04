@@ -2,6 +2,7 @@ import os
 import logging
 from flask import Flask, request, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from unidecode import unidecode  # Thêm import thư viện unidecode
 
 # Cấu hình logging
 logging.basicConfig(level=logging.INFO)
@@ -32,11 +33,19 @@ def index():
         user_input = request.form['user_input'].lower()
         logging.info(f"User input: {user_input}")
 
-        word = Dictionary.query.filter_by(key=user_input).first()
+        # Loại bỏ dấu và chuyển thành chữ thường
+        user_input_no_accent = unidecode(user_input)  # Loại bỏ dấu
+
+        # Sử dụng like để tìm kiếm không phân biệt chữ hoa chữ thường và tìm giống như LIKE SQL
+        word = Dictionary.query.filter(Dictionary.key.ilike(f'%{user_input_no_accent}%')).first()  # Sử dụng `ilike` để tìm kiếm không phân biệt chữ hoa chữ thường
+        
         if word:
             result = word.value
         else:
             result = 'Không tìm thấy kết quả!'
+
+        # Ghi log cả input và output
+        logging.info(f"User output: {result}")
     
     return render_template('index.html', result=result)
 
