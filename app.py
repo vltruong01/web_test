@@ -30,16 +30,16 @@ with app.app_context():
 def index():
     result = ''
     if request.method == 'POST':
-        user_input = request.form['user_input'].lower()
+        user_input = request.form['user_input'].lower()  # Đưa đầu vào thành chữ thường
         logging.info(f"User input: {user_input}")
 
         # Loại bỏ dấu và chuyển thành chữ thường
         user_input_no_accent = unidecode(user_input)  # Loại bỏ dấu
-        
-        # Tìm kiếm cụm từ chính xác trong cơ sở dữ liệu
-        # Sử dụng `ilike` để tìm kiếm không phân biệt chữ hoa/chữ thường
+
+        # Tìm kiếm từ trong cơ sở dữ liệu, sử dụng ilike để so sánh không phân biệt hoa/thường
+        # Lưu ý: chỉ tìm từ có dấu (so với nguyên bản, không loại bỏ dấu khi lưu trong cơ sở dữ liệu)
         word = Dictionary.query.filter(Dictionary.key.ilike(f'%{user_input_no_accent}%')).first()
-        
+
         if word:
             result = word.value
         else:
@@ -55,7 +55,7 @@ def index():
 def admin():
     message = ''
     if request.method == 'POST':
-        key = request.form['key'].lower()
+        key = request.form['key'].lower()  # Nhập từ dưới dạng chữ thường để so sánh
         value = request.form['value']
 
         # Kiểm tra xem từ đã tồn tại chưa
