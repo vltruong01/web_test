@@ -22,21 +22,28 @@
         button {
             padding: 5px 10px;
         }
-        ul {
-            list-style-type: none;
-            padding: 0;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
-        li {
-            margin-bottom: 10px;
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
         }
         .delete-button {
             color: red;
-            border: none;
-            background: transparent;
-            cursor: pointer;
         }
-        .delete-button:hover {
-            text-decoration: underline;
+        .actions {
+            display: flex;
+            justify-content: space-between;
+        }
+        .action-btn {
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -49,28 +56,39 @@
         <input type="text" name="value" placeholder="Nhập nghĩa" required>
         <button type="submit" name="action" value="add">Thêm</button>
     </form>
-    
+
     <p>{{ message }}</p>
 
     <h3>Từ điển hiện tại:</h3>
-    <ul>
-        {% for key, value in dictionary.items() %}
-            <li>
-                <strong>{{ key }}</strong>: 
-                <!-- Cập nhật từ -->
-                <form method="post" style="display:inline;">
-                    <input type="hidden" name="key" value="{{ key }}">
-                    <input type="text" name="value" value="{{ value }}" required>
-                    <button type="submit" name="action" value="update">Cập nhật</button>
-                </form>
-                <!-- Xóa từ -->
-                <form method="post" style="display:inline;">
-                    <input type="hidden" name="key" value="{{ key }}">
-                    <button type="submit" name="action" value="delete" class="delete-button">Xóa</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th>Từ</th>
+                <th>Nghĩa</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for key, value in dictionary.items() %}
+            <tr>
+                <td><strong>{{ key }}</strong></td>
+                <td>
+                    <form method="post" style="display:inline;">
+                        <input type="hidden" name="key" value="{{ key }}">
+                        <input type="text" name="value" value="{{ value }}" required>
+                        <button type="submit" name="action" value="update" class="action-btn">Cập nhật</button>
+                    </form>
+                </td>
+                <td>
+                    <form method="post" style="display:inline;">
+                        <input type="hidden" name="key" value="{{ key }}">
+                        <button type="submit" name="action" value="delete" class="delete-button action-btn">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
     <a href="/">⬅ Quay lại trang tra cứu</a>
 </body>
